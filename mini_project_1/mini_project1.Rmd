@@ -1,0 +1,108 @@
+---
+title: "mini_project_1"
+author: "Zhanchao Yang"
+date: "2024-10-07"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Mini Project 1
+
+## set work directory
+
+```{r}
+setwd("/Users/apple/Desktop/CPLN503/mini_project_1")
+```
+
+## load required packages
+
+```{r }
+library(tidyverse)
+library(sf)
+library(nngeo)
+library(units)
+library(pacman)
+```
+
+## load data
+```{r}
+station<- st_read("data/phl_bike_stations.shp")
+add <- read_csv("data/indego-stations-2024-07-01.csv")
+rider <- read_csv("data/indego-trips-2024-q2.csv")
+neighborhood <- st_read("data/philadelphia-neighborhoods.shp")
+```
+
+## join the station with additional information csv
+```{r}
+station <- station %>%
+  left_join(., add, by = c("id" = "Station_ID")) 
+```
+
+## cleaning the rider table
+
+```{r}
+rider <- rider %>%
+  select(duration, start_time, end_time, start_station, end_station, trip_route_category, bike_type) 
+```
+
+## The 10 stations with the HIGHEST number of STARTS (stations that are origins)
+```{r}
+rider_starter <- rider %>%
+  group_by(start_station) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n))
+```
+
+```{r}
+head(rider_starter, 10)
+```
+## The 10 stations with the LOWEST number of STARTS (stations that are origins)
+```{r}
+tail(rider_starter, 10)
+```
+## A map that displays the number of STARTS by station that shows the range of values
+```{r}
+start_station_join <- station %>%
+  left_join(., rider_starter, by = c("id" = "start_station"))
+```
+
+## The 10 stations with the HIGHEST number of ENDS (stations that are destinations)
+```{r}
+rider_ender <- rider %>%
+  group_by(end_station) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n))
+```
+
+```{r}
+head(rider_ender, 10)
+```
+
+## The 10 stations with the LOWEST number of ENDS (stations that are destinations)
+```{r}
+tail(rider_ender, 10)
+```
+
+## A map that displays the number of ENDS by station that shows the range of values
+```{r}
+end_station_join <- station %>%
+  left_join(., rider_ender, by = c("id" = "end_station"))
+```
+
+## The 5 STARTING STATIONS with the longest AVERAGE trip durations
+```{r}
+average_duration_by_station <- rider %>%
+  group_by(start_station) %>%
+  summarize(average_duration = mean(duration, na.rm = TRUE))%>%
+  arrange(desc(average_duration))
+```
+
+```{r}
+head(average_duration_by_station, 5)
+```
+## the 5 STARTING stations with the lowest AVERAGE trip durations
+```{r}
+tail(average_duration_by_station, 5)
+```

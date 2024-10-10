@@ -106,3 +106,20 @@ head(average_duration_by_station, 5)
 ```{r}
 tail(average_duration_by_station, 5)
 ```
+
+## BASED ON THE YEAR THEY WERE ACTIVATED, had the most trips
+```{r}
+staion_ender_starter <- left_join(rider_ender, rider_starter, by = c("end_station" = "start_station")) %>%
+  mutate(total = n.x + n.y) %>%
+  select("end_station", "total")%>%
+  rename("id" = "end_station")
+```
+
+```{r}
+station_complete <- station %>%
+  left_join(., staion_ender_starter, by = c("id" = "id"))
+```
+
+```{r}
+
+```

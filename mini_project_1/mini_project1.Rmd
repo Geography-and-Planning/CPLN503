@@ -7,27 +7,16 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-```
-# Mini Project 1
 
-## set work directory
-
-```{r}
-setwd("/Users/apple/Desktop/CPLN503/mini_project_1")
-```
-
-## load required packages
-
-```{r }
 library(tidyverse)
 library(sf)
 library(nngeo)
 library(units)
 library(pacman)
+library(lubridate)
 ```
-
-## load data
-```{r}
+Load required data
+```{r, include=FALSE}
 station<- st_read("data/phl_bike_stations.shp")
 add <- read_csv("data/indego-stations-2024-07-01.csv")
 rider <- read_csv("data/indego-trips-2024-q2.csv")
@@ -107,7 +96,7 @@ head(average_duration_by_station, 5)
 tail(average_duration_by_station, 5)
 ```
 
-## BASED ON THE YEAR THEY WERE ACTIVATED, had the most trips
+## What stations,BASED ON THE YEAR THEY WERE ACTIVATED, had the most trips?
 ```{r}
 staion_ender_starter <- left_join(rider_ender, rider_starter, by = c("end_station" = "start_station")) %>%
   mutate(total = n.x + n.y) %>%
@@ -121,5 +110,25 @@ station_complete <- station %>%
 ```
 
 ```{r}
-
+station_complete <- station_complete %>%
+  rename("Activation_date"="Day of Go_live_date")
 ```
+
+```{r}
+station_complete <- station_complete %>%
+  mutate(Acti_date = mdy(Activation_date)) %>%
+  mutate(year = year(Acti_date))
+```
+
+```{r}
+station_trip_by_year <-station_complete %>%
+  group_by(year,id) %>%
+  summarize(total_trip = sum(total), .groups = "drop")
+```
+
+```{r}
+top_stations_by_year <- station_trip_by_year %>%
+  group_by(year) %>%
+  filter(total_trip== max(total_trip))
+```
+

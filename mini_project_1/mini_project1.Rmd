@@ -132,3 +132,47 @@ top_stations_by_year <- station_trip_by_year %>%
   filter(total_trip== max(total_trip))
 ```
 
+## What are the 5 neighborhoods with the most TOTAL TRIPS and what are the 5 neighborhoods with the most TRIPS PER STATION?
+```{r}
+neighborhood <-neighborhood %>%
+  st_transform(crs=st_crs(station_complete))
+```
+Check the invalid geometries in the neighborhood data
+```{r}
+invalid_neighborhoods <- neighborhood %>%
+  filter(!st_is_valid(.))
+
+# Print out how many invalid geometries there are
+print(paste("Number of invalid geometries:", nrow(invalid_neighborhoods)))
+
+neighborhood <- st_make_valid(neighborhood)
+```
+Spatial join the station data with the neighborhood data
+```{r}
+station_in_neighborhood <- station_complete %>%
+  st_join(neighborhood, join= st_within) 
+```
+
+```{r}
+station_in_neighborhood <- station_in_neighborhood %>%
+  group_by(NAME) %>%
+  summarize(total_trip = sum(total), total_station = n()) %>%
+  mutate(trip_per_station = total_trip/total_station) %>%
+  arrange(desc(total_trip))
+```
+
+## A categorical map that colors the stations by three categories for trip duration. You determine what values correspond to which class, but the map should have three categories: short, medium and long.
+```{r}
+average_duration_by_station <- average_duration_by_station %>%
+  mutate(average_duration_cat = case_when(
+    average_duration <= 20 ~ "short",
+    average_duration > 20 & average_duration <= 30 ~ "medium",
+    average_duration > 30 ~ "long"
+  ))%>%
+  rename("id" = "start_station")
+```
+
+```{r}
+average_duration_staion_join <- left_join(station, average_duration_by_station, by = c("id" = "id"))
+```
+

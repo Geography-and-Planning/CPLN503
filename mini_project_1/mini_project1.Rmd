@@ -190,3 +190,37 @@ st_write(station_trip_by_year, "station_trip_by_year.gpkg")
 st_write(average_duration_staion_join, "average_duration_staion_join.gpkg")
 ```
 
+## get census data
+```{r}
+library(tidycensus)
+```
+
+```{r}
+acs_2022 <- load_variables(2022, dataset="acs5")
+acsVaraibles <- c(totpop = "B01001_001",
+                  tot_commute="B08006_001",
+                  bikers ="B08006_014",
+                  median_age="B01002_001"
+                  )
+```
+
+```{r}
+Philiy_acs_2022 <- get_acs(geography="tract", 
+                           variables=acsVaraibles, 
+                           state="PA", 
+                           county="Philadelphia", 
+                           survey='acs5',
+                           year=2022,
+                           output="wide",
+                           geometry=TRUE)
+```
+
+
+```{r}
+Philiy_acs_2022 <- Philiy_acs_2022 %>%
+  mutate(bike_rate = bikersE/tot_commuteE)
+```
+
+```{r}
+st_write(Philiy_acs_2022, "Philiy_acs_2022.gpkg")
+```

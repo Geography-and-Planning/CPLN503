@@ -176,3 +176,17 @@ average_duration_by_station <- average_duration_by_station %>%
 average_duration_staion_join <- left_join(station, average_duration_by_station, by = c("id" = "id"))
 ```
 
+```{r}
+st_write(start_station_join, "start_station_join.gpkg")
+```
+```{r}
+st_write(end_station_join, "end_station_join.gpkg")
+```
+```{r}
+st_write(station_trip_by_year, "station_trip_by_year.gpkg")
+```
+
+```{r}
+st_write(average_duration_staion_join, "average_duration_staion_join.gpkg")
+```
+

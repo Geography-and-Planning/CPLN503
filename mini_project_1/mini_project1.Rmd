@@ -149,6 +149,11 @@ neighborhood <- st_make_valid(neighborhood)
 ```
 Spatial join the station data with the neighborhood data
 ```{r}
+station_complete <- station_complete %>%
+  filter(!is.na(total))
+```
+
+```{r}
 station_in_neighborhood <- station_complete %>%
   st_join(neighborhood, join= st_within) 
 ```
@@ -176,19 +181,6 @@ average_duration_by_station <- average_duration_by_station %>%
 average_duration_staion_join <- left_join(station, average_duration_by_station, by = c("id" = "id"))
 ```
 
-```{r}
-st_write(start_station_join, "start_station_join.gpkg")
-```
-```{r}
-st_write(end_station_join, "end_station_join.gpkg")
-```
-```{r}
-st_write(station_trip_by_year, "station_trip_by_year.gpkg")
-```
-
-```{r}
-st_write(average_duration_staion_join, "average_duration_staion_join.gpkg")
-```
 
 ## get census data
 ```{r}
@@ -204,7 +196,7 @@ acsVaraibles <- c(totpop = "B01001_001",
                   )
 ```
 
-```{r}
+```{r,echo= TRUE}
 Philiy_acs_2022 <- get_acs(geography="tract", 
                            variables=acsVaraibles, 
                            state="PA", 
@@ -221,6 +213,3 @@ Philiy_acs_2022 <- Philiy_acs_2022 %>%
   mutate(bike_rate = bikersE/tot_commuteE)
 ```
 
-```{r}
-st_write(Philiy_acs_2022, "Philiy_acs_2022.gpkg")
-```

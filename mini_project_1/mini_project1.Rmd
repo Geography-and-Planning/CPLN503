@@ -91,6 +91,8 @@ average_duration_by_station <- rider %>%
 ```{r}
 head(average_duration_by_station, 5)
 ```
+
+
 ## the 5 STARTING stations with the lowest AVERAGE trip durations
 ```{r}
 tail(average_duration_by_station, 5)
@@ -131,6 +133,8 @@ top_stations_by_year <- station_trip_by_year %>%
   group_by(year) %>%
   filter(total_trip== max(total_trip))
 ```
+
+
 
 ## What are the 5 neighborhoods with the most TOTAL TRIPS and what are the 5 neighborhoods with the most TRIPS PER STATION?
 ```{r}
@@ -211,5 +215,33 @@ Philiy_acs_2022 <- get_acs(geography="tract",
 ```{r}
 Philiy_acs_2022 <- Philiy_acs_2022 %>%
   mutate(bike_rate = bikersE/tot_commuteE)
+```
+
+## Land use data munpulation
+```{r}
+land_use <- st_read("data/Land_Use.shp")
+```
+```{r}
+land_use <- land_use %>%
+  mutate(land_use = case_when(
+    C_DIG1 == 1 ~ "Residential",
+    C_DIG1 == 2 ~ "Commercial",
+    C_DIG1 == 3 ~ "Industrial",
+    C_DIG1 == 4 ~ "Civic/Institution",
+    C_DIG1 == 5 ~ "Transportation",
+    C_DIG1 == 6 ~ "Culture recreation",
+    C_DIG1 == 7 ~ "Park Open Space",
+    C_DIG1 == 8 ~ "Water",
+    C_DIG1 == 9 ~ "Vacant or Other"
+  ))
+```
+
+```{r}
+land_use_e <- land_use %>%
+  select(land_use)
+```
+
+```{r}
+st_write(land_use_e, "land_use_e.gpkg")
 ```
 

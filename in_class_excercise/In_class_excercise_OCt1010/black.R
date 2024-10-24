@@ -1,7 +1,6 @@
-library(tidyverse)
 library(sf)
+library(tidyverse)
 library(tidycensus)
-
 
 pluto <- st_read(("C:/Users/zyang/OneDrive/desktop/CPLN503/in_class_excercise/In_class_excercise_OCt1010/MapPLUTO24v3_1.gdb"), 
                  query = "select * from MapPLUTO_24v3_1_clipped where Borough = 'BK'", quiet = TRUE)
@@ -14,12 +13,7 @@ pluto <- pluto %>%
 bk_bg <- get_acs(geography = "block group", 
                  variables = c(bg_tot_pop = "B03002_001", 
                                bg_white_nh = "B03002_003" , 
-                               bg_black_nh = "B03002_004", 
-                               bg_asian_nh = "B03002_006" , 
-                               bg_native_hawaiian = "B03002_007",
-                               bg_other_nh = "B03002_008", 
-                               bg_two_more_nh = "B03002_009",
-                               bg_hispanic = "B03002_012"), 
+                               bg_black_nh = "B03002_004"), 
                  year = 2021, output = "wide", 
                  geometry = TRUE, state = "NY", 
                  county = "Kings", survey = "acs5", 
@@ -28,26 +22,21 @@ bk_bg <- get_acs(geography = "block group",
 bk_tracts <-get_acs(geography = "tract", 
                     variables = c(tract_tot_pop = "B03002_001",
                                   tract_white_nh = "B03002_003", 
-                                  tract_black_nh = "B03002_004",   
-                                  tract_asian_nh = "B03002_006", 
-                                  tract_native_hawaiian = "B03002_007",
-                                  tract_other_nh = "B03002_008" , 
-                                  tract_two_more_nh = "B03002_009",
-                                  tract_hispanic = "B03002_012" ), 
+                                  tract_black_nh = "B03002_004"), 
                     year = 2021, output = "wide", 
                     geometry = TRUE, state = "NY", 
                     county = "Kings", survey = "acs5", 
                     progress = FALSE)
 
+
 pluto <- st_transform(pluto, crs = st_crs(bk_bg))
 
 pluto <- pluto %>%
-  st_join(bk_bg %>% select(block_group_2021 = GEOID, 3, 5, 7, 9, 11, 13, 15, 17))
+  st_join(bk_bg %>% select(block_group_2021 = GEOID, 3, 5, 7))
 
 pluto <- pluto %>%
   st_join(bk_tracts %>%
-            select(tract_2021 = GEOID, 3, 5, 7, 9, 11, 13, 15, 17))
-
+            select(tract_2021 = GEOID, 3, 5, 7))
 pluto <- pluto %>%
   select(Borough, Address, OwnerName, LotArea, BldgArea,
          ResArea, UnitsRes, ARA, block_group_2021, 
@@ -73,24 +62,24 @@ pluto <- pluto |>
 
 pluto <- pluto %>% 
   ungroup() %>% 
-  mutate(bg_tot_dasym = case_when(UnitsRes == 0 & ResArea != 0 ~ 
-                                    bg_tot_popE * (ARA/bg_ARA),
-                                  UnitsRes > 0 ~ bg_tot_popE * (UnitsRes/bg_res_units),
+  mutate(bg_bl_dasym = case_when(UnitsRes == 0 & ResArea != 0 ~ 
+                                    bg_black_nhE * (ARA/bg_ARA),
+                                  UnitsRes > 0 ~ bg_black_nhE * (UnitsRes/bg_res_units),
                                   TRUE ~ 0),
-         tract_tot_dasym = case_when(UnitsRes == 0 & ResArea != 0 ~ 
-                                       tract_tot_popE * (ARA/tract_ARA),
-                                     UnitsRes > 0 ~ tract_tot_popE * (UnitsRes/tract_res_units),
+         tract_bl_dasym = case_when(UnitsRes == 0 & ResArea != 0 ~ 
+                                       tract_black_nhE * (ARA/tract_ARA),
+                                     UnitsRes > 0 ~ tract_black_nhE * (UnitsRes/tract_res_units),
                                      TRUE ~ 0))
 
-tract_ru_totals <- pluto |> 
+
+tract_ru_bl <- pluto |> 
   as_tibble() |> 
   group_by(tract_2021) |> 
-  summarise(tract_ru_est = sum(tract_tot_dasym, na.rm = TRUE))
+  summarise(tract_bl_est = sum(tract_bl_dasym, na.rm = TRUE))
 
-tract_ru_totals <- tract_ru_totals |> 
+tract_ru_bl <- tract_ru_bl |> 
   inner_join(bk_tracts |> 
-               select(GEOID, tract_tot_popE), by = c("tract_2021" = "GEOID"))
-
+               select(GEOID, tract_black_nhE), by = c("tract_2021" = "GEOID"))
 
 floods <- st_read("https://data.cityofnewyork.us/api/geospatial/ezfn-5dsb?method=export&format=GeoJSON", )
 
@@ -110,18 +99,18 @@ bk_bg_floods <- bk_bg |>
   st_join(floods) |> 
   as_tibble() |> 
   group_by(flood_plain) |> 
-  summarise(flood_pop_bg = sum(bg_tot_popE, na.rm = TRUE)) |> 
+  summarise(flood_bl_bg = sum(bg_black_nhE, na.rm = TRUE)) |> 
   mutate(flood_plain = if_else(is.na(flood_plain), "Not in plain", flood_plain))
 
 bk_tract_flood <- bk_tracts |> 
   st_join(floods) |> 
   as_tibble() |> 
   group_by(flood_plain) |> 
-  summarise(flood_pop_tract = sum(tract_tot_popE, na.rm = TRUE)) |> 
+  summarise(flood_bl_tract = sum(tract_black_nhE, na.rm = TRUE)) |> 
   mutate(flood_plain = if_else(is.na(flood_plain), "Not in plain", flood_plain))
 
 pluto_res <- pluto |> 
-  filter(bg_tot_dasym > 0 | tract_tot_dasym > 0)
+  filter(bg_bl_dasym > 0 | tract_bl_dasym > 0)
 
 pluto_non_res <- pluto |> 
   filter((is.na(ResArea) | ResArea == 0) & (UnitsRes == 0 | is.na(UnitsRes)))
@@ -132,14 +121,11 @@ pluto_floods <- pluto_res |>
 pluto_floods <- pluto_floods |> 
   as_tibble() |> 
   group_by(flood_plain) |> 
-  summarise(flood_pop_bg_dasym = sum(bg_tot_dasym, na.rm = TRUE),
-            flood_pop_tract_dasym = sum(tract_tot_dasym, na.rm = TRUE)) |> 
+  summarise(flood_bl_bg_dasym = sum(bg_bl_dasym, na.rm = TRUE),
+            flood_bl_tract_dasym = sum(tract_bl_dasym, na.rm = TRUE)) |> 
   mutate(flood_plain = if_else(is.na(flood_plain), "Not in plain", flood_plain))
 
 
 pluto_floods <- pluto_floods |> 
   left_join(bk_tract_flood) |> 
   left_join(bk_bg_floods)
-
-st_write(floods, "floods.gpkg", driver = "GPKG")
-st_write(pluto, "pluto.gpkg", driver = "GPKG")

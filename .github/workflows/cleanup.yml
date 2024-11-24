@@ -17,6 +17,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Configure Git user
+        run: |
+          git config --global user.email "zhanchao@upenn.edu"
+          git config --global user.name "zyang91"
+
       - name: Find and remove .DS_Store files
         run: |
           git rm --cached $(git ls-files | grep .DS_Store) || echo "No .DS_Store files found"

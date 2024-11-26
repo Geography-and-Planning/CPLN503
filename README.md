@@ -1,13 +1,5 @@
 # CPLN 503: Modeling Geographical Objects
 
-Department of City and Regional Planning
-
-University of Pennsylvania
-
-Fall 2024
-
-Instructor: Dr. Jamaal Green
-
 ## Course Goals and Objectives
 
 Geographic information systems (GIS) are configurations of computer

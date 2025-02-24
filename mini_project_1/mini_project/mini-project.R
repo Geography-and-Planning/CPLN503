@@ -149,5 +149,3 @@ average_duration_by_station <- average_duration_by_station %>%
   rename("id" = "start_station")
 
 average_duration_staion_join <- left_join(station, average_duration_by_station, by = c("id" = "id"))
-
-

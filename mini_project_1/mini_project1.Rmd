@@ -244,4 +244,3 @@ land_use_e <- land_use %>%
 ```{r}
 st_write(land_use_e, "land_use_e.gpkg")
 ```
-

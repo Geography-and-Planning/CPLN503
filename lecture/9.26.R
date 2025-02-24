@@ -39,4 +39,3 @@ violations_ct <- violations %>%
   count(violationcodetitle)%>%
   arrange(desc(n)) %>%
   slice_head(n=10)
-

@@ -94,7 +94,7 @@ geoprocess_layers &lt;- st_layers(&quot;Oct12_Spatial_Join_Data/Oct5_Demonstrati
 
 tmap_mode(&quot;view&quot;)</code></pre>
 <pre class="r"><code>geoprocess_layers</code></pre>
-<pre><code>## Driver: OpenFileGDB 
+<pre><code>## Driver: OpenFileGDB
 ## Available layers:
 ##                     layer_name             geometry_type features fields
 ## 1               CC_Student_One 3D Measured Multi Polygon        1      5
@@ -164,10 +164,10 @@ tm_shape(hood3) +
   tm_borders(col = &quot;gray4&quot;) +
 tm_shape(hood_merge) +
   tm_fill(col = &quot;dodgerblue&quot;) +
-  tm_borders(col = &quot;gray4&quot;) 
+  tm_borders(col = &quot;gray4&quot;)
 
-hood_merge_tmap %&gt;% 
-  tmap_leaflet() %&gt;% 
+hood_merge_tmap %&gt;%
+  tmap_leaflet() %&gt;%
   leaflet::addLayersControl(overlayGroups = c(&quot;hood1&quot;, &quot;hood2&quot;, &quot;hood3&quot;, &quot;hood_merge&quot;), position = &quot;topright&quot;)</code></pre>
 <div class="figure">
 <div id="htmlwidget-c880da5b22e137a0b448" style="width:672px;height:480px;" class="leaflet html-widget"></div>
@@ -192,8 +192,8 @@ Merged Neighborhood Map
 tm_shape(hood_centroids) +
   tm_dots(col = &quot;magenta&quot;)
 
-hood_centroid_tmap %&gt;% 
-  tmap_leaflet() %&gt;% 
+hood_centroid_tmap %&gt;%
+  tmap_leaflet() %&gt;%
   leaflet::addLayersControl(overlayGroups = c(&quot;hood_merge&quot;, &quot;hood_centroids&quot;), position = &quot;topright&quot;)</code></pre>
 <div class="figure">
 <div id="htmlwidget-449c9101627487999c30" style="width:672px;height:480px;" class="leaflet html-widget"></div>
@@ -215,8 +215,8 @@ Neighborhood Centroids
 <p>First, let’s just get a single polygon for the convex hull of all points. We can combine our geometries using <em>st_combine()</em>, get the convex hull of this now unified set of points and go from there.</p>
 <pre class="r"><code>rand_pts &lt;- st_read(dsn = gdb_path, layer = &quot;RandomPoints&quot;, quiet = TRUE)
 
-rand_pts_hull &lt;- rand_pts %&gt;% 
-  summarise(st_combine(x = Shape)) %&gt;% 
+rand_pts_hull &lt;- rand_pts %&gt;%
+  summarise(st_combine(x = Shape)) %&gt;%
   st_convex_hull()
 
 hull1 &lt;-  tm_shape(rand_pts) +
@@ -224,8 +224,8 @@ hull1 &lt;-  tm_shape(rand_pts) +
 tm_shape(rand_pts_hull) +
   tm_fill(col = &quot;magenta&quot;, alpha = .3)
 
-hull1 %&gt;% 
-  tmap_leaflet() %&gt;% 
+hull1 %&gt;%
+  tmap_leaflet() %&gt;%
   leaflet::addLayersControl(position = &quot;topright&quot;)</code></pre>
 <div class="figure">
 <div id="htmlwidget-1a9185dd3c8e6f059cfa" style="width:672px;height:480px;" class="leaflet html-widget"></div>
@@ -235,12 +235,12 @@ Singular Convex Hull
 </p>
 </div>
 <p>Now, let’s group on the CID column and go from there. For simplicity’s sake, let’s transform the CID column in a categorical variable first, then group, summarise and get our respective convex hulls.The important steps here are the summarise and combine steps to tell the convex hull function explicitly which geometries to operate on so we can get a neat polygon. Again, this is lower level functionality than what ArcPro offers us with its tool, but I hope you can see how this could be useful in setting up your varied workflows.</p>
-<pre class="r"><code>rand_pts &lt;- rand_pts %&gt;% 
+<pre class="r"><code>rand_pts &lt;- rand_pts %&gt;%
   mutate(CID = as.character(CID))
 
-rand_pts_hull &lt;- rand_pts %&gt;% 
-  group_by(CID) %&gt;% 
-  summarise(st_combine(x = Shape)) %&gt;% 
+rand_pts_hull &lt;- rand_pts %&gt;%
+  group_by(CID) %&gt;%
+  summarise(st_combine(x = Shape)) %&gt;%
   st_convex_hull()
 
 hull2 &lt;-  tm_shape(rand_pts) +
@@ -248,8 +248,8 @@ hull2 &lt;-  tm_shape(rand_pts) +
 tm_shape(rand_pts_hull) +
   tm_fill(col = &quot;CID&quot;, alpha = .3)
 
-hull2 %&gt;% 
-  tmap_leaflet() %&gt;% 
+hull2 %&gt;%
+  tmap_leaflet() %&gt;%
   leaflet::addLayersControl(position = &quot;topright&quot;)</code></pre>
 <div class="figure">
 <div id="htmlwidget-e71645e678e67d3ea443" style="width:672px;height:480px;" class="leaflet html-widget"></div>
@@ -316,9 +316,9 @@ Still Desirable
 </tbody>
 </table>
 <p>So, our a-spatial summary operation took us from 40 rows down to four. This, functionally, is what dissolve does for us also, but <em>with our geometries</em>. Let’s take a look at this spatially using just our <strong>dplyr</strong> syntax.</p>
-<pre class="r"><code>redline_dissolve &lt;- redlining_zones %&gt;% 
-  group_by(Condition) %&gt;% 
-  summarise() %&gt;% 
+<pre class="r"><code>redline_dissolve &lt;- redlining_zones %&gt;%
+  group_by(Condition) %&gt;%
+  summarise() %&gt;%
   st_make_valid()
 
 redline_dissolve_tmap &lt;- tm_shape(redline_dissolve) +
@@ -327,8 +327,8 @@ redline_dissolve_tmap &lt;- tm_shape(redline_dissolve) +
   tm_fill(col = &quot;Condition&quot;) +
   tmap_options(check.and.fix = TRUE)
 
-redline_dissolve_tmap %&gt;% 
-  tmap_leaflet() %&gt;% 
+redline_dissolve_tmap %&gt;%
+  tmap_leaflet() %&gt;%
   leaflet::addLayersControl(overlayGroups = c(&quot;redlining_zones&quot;, &quot;redline_dissolve&quot;), position = &quot;topright&quot;)</code></pre>
 <div class="figure">
 <div id="htmlwidget-dcee1ca24369f59be042" style="width:672px;height:480px;" class="leaflet html-widget"></div>
@@ -354,10 +354,10 @@ crimes_w_hoods &lt;- st_join(crimes, hoods, join = st_within)</code></pre>
 <p>First, remember to bring in <strong>nngeo</strong>, then let’s follow our workflow. Now, we want our <strong>living places</strong> layer to have the information of the nearest <strong>farmers’ market</strong>. But first, we need to convert our units because <strong>nngeo</strong> didn’t like the US Feet.</p>
 <pre class="r"><code>library(nngeo)
 
-farmers &lt;- st_read(dsn = gdb_path, layer = &quot;Farmers_Market&quot;, quiet = TRUE) %&gt;% 
+farmers &lt;- st_read(dsn = gdb_path, layer = &quot;Farmers_Market&quot;, quiet = TRUE) %&gt;%
   st_transform(crs = 3364)
 
-living_places &lt;- st_read(gdb_path, layer = &quot;Places_You_May_Live&quot;, quiet = TRUE) %&gt;% 
+living_places &lt;- st_read(gdb_path, layer = &quot;Places_You_May_Live&quot;, quiet = TRUE) %&gt;%
   st_transform(crs = 3364)
 
 living_places &lt;- st_join(living_places, farmers, join = st_nn, k = 1)</code></pre>

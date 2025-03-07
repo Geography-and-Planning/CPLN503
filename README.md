@@ -30,18 +30,18 @@ scripting. While this is not a statistical or geographic programming course, I w
 on how we can use the statistical programming language R to augment our GIS work. Many
 of you will probably be in the process of just starting to use R, and you should consider this
 course as a complement to your quantitative methods courses. There will not be a requirement to use
-R for your projects, but I hope the demonstrations will show that using R in a pragmatic fashion can 
+R for your projects, but I hope the demonstrations will show that using R in a pragmatic fashion can
 make your lives easier as you move through the course.
 
 The first section of this course (~35%) takes inspiration from the maxim that analysis is only
-as good as the data that supports it. Students will learn how to find and judge the quality of data, how to extract, 
+as good as the data that supports it. Students will learn how to find and judge the quality of data, how to extract,
 clean, and organize diverse formats, and how to correctly apply the data to specific analytics.
 The second section of the course (~65%) builds off the first by teaching students how to import and leverage data through
 powerful and relevant tools and analytical processes, especially those common to urban planning, design, and development. Key
 tools of focus include data management (joins, selections); modifying geometries (clip, union, intersect); summarizing data
 and trends (summarize, spatial join, dissolve); modeling transportation networks (network analyst); practical raster (density,
-interpolation); and statistical modeling. This section of the course will take an inductive approach, deconstructing the tools for the students 
-and challenging them on how to apply them in practical settings. Interspersed throughout the semester will be one or two multi-week projects 
+interpolation); and statistical modeling. This section of the course will take an inductive approach, deconstructing the tools for the students
+and challenging them on how to apply them in practical settings. Interspersed throughout the semester will be one or two multi-week projects
 in which students will synthesize and build upon the tools and techniques learned in class to solve real--
 world challenges and apply GIS in several practical situations. The specific content of this
 section will evolve based upon the progression of the semester. Some examples of analyses the
@@ -50,3 +50,4 @@ students may focus on include:
 - Using GIS to model the impacts of gerrymandering in key swing states
 - Modeling for-sale and rental housing markets sites to inform future developments
 - Using GIS to assist in a very peculiar “disaster management” scenario
+

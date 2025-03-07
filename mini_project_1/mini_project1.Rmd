@@ -26,14 +26,14 @@ neighborhood <- st_read("data/philadelphia-neighborhoods.shp")
 ## join the station with additional information csv
 ```{r}
 station <- station %>%
-  left_join(., add, by = c("id" = "Station_ID")) 
+  left_join(., add, by = c("id" = "Station_ID"))
 ```
 
 ## cleaning the rider table
 
 ```{r}
 rider <- rider %>%
-  select(duration, start_time, end_time, start_station, end_station, trip_route_category, bike_type) 
+  select(duration, start_time, end_time, start_station, end_station, trip_route_category, bike_type)
 ```
 
 ## The 10 stations with the HIGHEST number of STARTS (stations that are origins)
@@ -159,7 +159,7 @@ station_complete <- station_complete %>%
 
 ```{r}
 station_in_neighborhood <- station_complete %>%
-  st_join(neighborhood, join= st_within) 
+  st_join(neighborhood, join= st_within)
 ```
 
 ```{r}
@@ -201,10 +201,10 @@ acsVaraibles <- c(totpop = "B01001_001",
 ```
 
 ```{r,echo= TRUE}
-Philiy_acs_2022 <- get_acs(geography="tract", 
-                           variables=acsVaraibles, 
-                           state="PA", 
-                           county="Philadelphia", 
+Philiy_acs_2022 <- get_acs(geography="tract",
+                           variables=acsVaraibles,
+                           state="PA",
+                           county="Philadelphia",
                            survey='acs5',
                            year=2022,
                            output="wide",

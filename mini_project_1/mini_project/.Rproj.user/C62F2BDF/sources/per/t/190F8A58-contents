@@ -18,13 +18,13 @@ station <- station %>%
 
 ## cleaning the rider table
 rider <- rider %>%
-  select(duration, 
+  select(duration,
          start_time,
          end_time,
          start_station,
-         end_station, 
-         trip_route_category, 
-         bike_type) 
+         end_station,
+         trip_route_category,
+         bike_type)
 
 ## The 10 stations with the HIGHEST number of STARTS (stations that are origins)
 
@@ -130,7 +130,7 @@ station_complete <- station_complete %>%
   filter(!is.na(total))
 
 station_in_neighborhood <- station_complete %>%
-  st_join(neighborhood, join= st_within) 
+  st_join(neighborhood, join= st_within)
 
 station_in_neighborhood <- station_in_neighborhood %>%
   group_by(NAME) %>%

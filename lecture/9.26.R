@@ -10,29 +10,29 @@ violation_dupes<- violations %>%
   arrange(desc(n)) %>%
   head()
 
-viol_check <- violations %>% 
-  filter(casenumber == "CF-2023-010908") %>% 
-  select(casenumber, casetype:violationnumber, violationcode) %>% 
+viol_check <- violations %>%
+  filter(casenumber == "CF-2023-010908") %>%
+  select(casenumber, casetype:violationnumber, violationcode) %>%
   head()
 
 # get the rows with duplicate violation numbers
-viol_check2 <- violations %>% 
-  group_by(violationnumber) %>% 
-  tally() %>% 
+viol_check2 <- violations %>%
+  group_by(violationnumber) %>%
+  tally() %>%
   filter( n > 1)
 
 # Get the rows with duplicate violation numbers
 dupe_rows <- as_vector(viol_check2$violationnumber)
 
 # get all the duplicate rows
-viol_check3 <- violations %>% 
+viol_check3 <- violations %>%
   filter(violationnumber %in% c(dupe_rows))
 
-check <- viol_check3 %>% 
+check <- viol_check3 %>%
   filter(address== "3220 N 16TH ST")
 
 # get the actual number (true data)
-violations <-violations %>% 
+violations <-violations %>%
   distinct(violationnumber, .keep_all = TRUE)
 
 violations_ct <- violations %>%

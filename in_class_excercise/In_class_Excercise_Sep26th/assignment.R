@@ -13,11 +13,11 @@ parcels <- st_read("2024-09-26_Data.gdb", layer = "Parcels",quiet=TRUE)
 parks <- st_read("2024-09-26_Data.gdb", layer = "Parks",quiet=TRUE)
 crimes<- st_read("2024-09-26_Data.gdb", layer = "Crimes",quiet=TRUE)
 
-johns <- parcels %>% 
+johns <- parcels %>%
   filter(str_detect(string = OWNER1, pattern = "^JOHN\\s"))
 
-johns <- johns %>% 
-  mutate(parcel_acres = st_area(.)) %>% 
+johns <- johns %>%
+  mutate(parcel_acres = st_area(.)) %>%
   mutate(parcel_acres = set_units(x = parcel_acres, value = "acres"))
 
 johns <-johns %>%
@@ -34,15 +34,15 @@ parks_diff<- st_difference(parks1000, parks500)
 
 johns <- johns[parks_diff,]
 
-johns <- johns %>% 
+johns <- johns %>%
   filter(str_detect(string = DESC, pattern = "^ROW"))
 
-crimes <- crimes %>% 
-  filter(!is.na(lng) | !is.na(lat)) %>% 
-  st_as_sf(coords = c("lng", "lat"), crs = 4326) %>% 
+crimes <- crimes %>%
+  filter(!is.na(lng) | !is.na(lat)) %>%
+  st_as_sf(coords = c("lng", "lat"), crs = 4326) %>%
   st_transform(st_crs(johns))
 
-crim <- crimes %>% 
+crim <- crimes %>%
   filter(str_detect(string = text_general_code, pattern = regex("Assault")))
 
 crimes1000 <- st_buffer(x= crim, dist=1000)

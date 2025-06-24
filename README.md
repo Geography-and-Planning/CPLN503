@@ -1,5 +1,6 @@
 # CPLN 503: Modeling Geographical Objects
-
+UPenn
+Prof. Jaamal Green
 ## Course Goals and Objectives
 
 Geographic information systems (GIS) are configurations of computer
@@ -50,4 +51,3 @@ students may focus on include:
 - Using GIS to model the impacts of gerrymandering in key swing states
 - Modeling for-sale and rental housing markets sites to inform future developments
 - Using GIS to assist in a very peculiar “disaster management” scenario
-

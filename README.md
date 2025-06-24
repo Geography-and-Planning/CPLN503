@@ -1,5 +1,6 @@
 # CPLN 503: Modeling Geographical Objects
-
+UPenn
+Prof. Jaamal Green
 ## Course Goals and Objectives
 
 Geographic information systems (GIS) are configurations of computer
